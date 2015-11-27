@@ -15,7 +15,7 @@ set -e
 
 # Must be a valid filename
 NAME=skyhawq
-USER=pi
+USER=root
 BASE=/etc/skyhawq;
 START=/etc/skyhawq/skyhawq.sh;
 LOG=/var/log/skyhawq.log;
@@ -26,7 +26,7 @@ case "$1" in
 	mkdir -p /var/run/skyhawq/photos;
     echo -e "Starting $NAME";
 	cd $BASE;
-	sudo -b -u $USER $START > $LOG;
+	$START > $LOG &
 	echo $! > $PID;
 	echo "Done!"
 	;;

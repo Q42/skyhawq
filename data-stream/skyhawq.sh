@@ -1,17 +1,9 @@
 #!/bin/sh
 
-# Stop subprocess on SIGTERM
-_term() { 
-  echo "Caught SIGTERM signal!" 
-  kill -TERM "$child" 2>/dev/null
-}
-trap _term SIGTERM
-
 # GPS
-mkdir -p /var/skyhawq 
+mkdir -p /var/skyhawq
 cd /var/skyhawq
-./gps &
-child=$!
+/etc/skyhawq/gps &
 
 # Photos
 while true
