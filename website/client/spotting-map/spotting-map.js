@@ -125,15 +125,13 @@ Template.spottingMap.events({
      * Handles removal of a marker
      * @this {{}} The marker object to remove
      */
-    'click [data-do=remove-marker]': function (event) {
+    'click [data-do=remove-marker]': function () {
         var _markers = markers.get(),
             marker = this;
 
-        console.info(_markers);
-        _markers.filter(function (item) {
+        _markers = _markers.filter(function (item) {
             return item.x !== marker.x && item.y !== marker.y;
         });
-        console.info(_markers);
 
         markers.set(_markers);
     },
