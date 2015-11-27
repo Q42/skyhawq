@@ -1,14 +1,9 @@
 var lazy = require("lazy"), fs  = require("fs");
 var moment = require("moment");
 
-var beforeOneWeek = new Date(new Date().getTime() - 60 * 60 * 24 * 7 * 1000)
-  , day = beforeOneWeek.getDay()
-  , diffToMonday = beforeOneWeek.getDate() - day + (day === 0 ? -6 : 1)
-  , lastMonday = new Date.UTC(beforeOneWeek.setUTCDate(diffToMonday))
-  , lastSundayWithTime = new Date.UTC(beforeOneWeek.setUTCDate(diffToMonday + 6))
-  , lastSunday = new Date.UTC(lastSundayWithTime.getUTCFullYear(), lastSundayWithTime.getUTCMonth(), lastSundayWithTime.getUTCDate());
+var startOfWeek = moment().utc().startOf('week');
 
-var data = fs.readFileSync('/Volumes/Crucial/latest/gps-20151127-195319.txt').toString()
+var gps = fs.readFileSync('/Volumes/Crucial/latest/gps-20151127-195319.txt').toString()
      .split('\n')
      .map(function(line) {
          
@@ -23,14 +18,11 @@ var data = fs.readFileSync('/Volumes/Crucial/latest/gps-20151127-195319.txt').to
 
 		if(partType == 'gps') {
 			var gpsData = partData.split(';');
-
-			var currentDate = parseDateTimeFromGpsWeekTime(parseFloat(gpsData[0]));			
-
 			return {
 				type: 'gps',
-				datetime: currentDate,
-				longitude: gpsData[1],
-				latitude: gpsData[2],
+				date: parseDateFromGpsWeekTime(parseFloat(gpsData[0])),
+				longitude: parseFloat(gpsData[1]),
+				latitude: parseFloat(gpsData[2]),
 				raw: gpsData
 			};
 		} else if(partType == 'status') {
@@ -52,53 +44,56 @@ var data = fs.readFileSync('/Volumes/Crucial/latest/gps-20151127-195319.txt').to
      		}
      	}
      	return state;
-     }, { fix: null, store: [] });
+     }, { fix: null, store: [] }).store;
 
-data.store.forEach(function(line) { 
-	console.log(line)
-});
+// data.store.forEach(function(line) { 
+// 	console.log(line)
+// });
 
 var fotos = fs.readdirSync("/Volumes/Crucial/latest/").filter(function(f) {
 	return f.indexOf(".jpg") >= 0;
 }).map(function(f){
 	return {
-		date: moment(f.substr(0, 13), "YYMMDD-HHmmss").toDate(),
+		date: moment.utc(f.substr(0, 13), "YYMMDD-HHmmss"),
 		path: f
 	}
 });
 
 function interpolate(a, b, t) {
-	t = (t - a.datetime) / (b.datetime - a.datetime);
+	t = t.diff(a.date) / b.date.diff(a.date);
 	var dx = b.longitude - a.longitude,
 		dy = b.latitude - a.latitude;
 	return {
 		longitude: dx * t + a.longitude,
-		latitude: dy * t + a.latitude
+		latitude: dy * t + a.latitude,
 	};
 }
 
 var i = 0, j = 0, results = [];
-while(i < data.length && j < fotos.length) {
-	// Foto before GPS (before fix)
-	if(fotos[j].date < data[i].datetime) {
+while(i < gps.length && j < fotos.length) {
+	// Foto before GPS A (before fix)
+	if(fotos[j].date.isBefore(gps[i].date)) {
 		j++;
 		continue;
 	}
-	// Foto is after next GPS
-	if(data.length > i+1 && fotos[j].date > data[i+1].datetime) {
-		i++;
-		continue;
+	// Foto between GPS A&B
+	if(gps.length > i+1 && fotos[j].date.isBefore(gps[i+1].date)) {
+		results.push({
+			photoPath: fotos[j].path,
+			date: fotos[j].date.toDate(),
+			gps: interpolate(gps[i], gps[i+1], fotos[j].date)
+		});
+		j++;
 	}
-	// Foto between GPSs
-	results.push({
-		photoPath: fotos[j].path,
-		datetime: fotos[j].date,
-		gps: interpolate(data[i], data[i+1], fotos[j].date)
-	})
+	// Foto is after next GPS B
+	i++;
 }
 
-console.log(results);
+console.log(JSON.stringify({
+	flightPath: gps,
+	photos: results
+}, null, 2));
 
-function parseDateTimeFromGpsWeekTime(gpsWeekTime) {
-	return new Date(lastSunday.getTime() + gpsWeekTime*1000);
+function parseDateFromGpsWeekTime(gpsWeekTime) {
+	return startOfWeek.clone().add(gpsWeekTime, 'seconds');
 }
