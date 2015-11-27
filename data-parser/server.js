@@ -7,8 +7,11 @@ var Busboy = require('busboy');
 var md5File = require('md5-file');
 var childProcess = require("child_process");
 
-var folder = "/Volumes/Crucial/upload";
-childProcess.execSync("mkdir -p /Volumes/Crucial/upload");
+// Configuration: start like this `SECRET=random DATA=/folder node server.js`
+var secret = process.env.SECRET || "secret";
+var folder = process.env.DATA   || "/Volumes/Crucial/upload";
+
+childProcess.execSync("mkdir -p "+folder);
 
 function json(res, data) {
 	res.writeHead(200, {'Content-Type': 'application/json' });
@@ -19,7 +22,7 @@ var methods = {
 	
 	index: function(req, res){
 		res.writeHead(200, {'Content-Type': 'text/html' });
-		res.end("Greanpeace data ingestion server<br><br>See <a href='http://localhost:8000/flights'>http://localhost:8000/flights</a>");
+		res.end("Greanpeace data ingestion server<br><br>See <a href='/flights'>/flights</a>");
 		return;
 	},
 	
@@ -60,6 +63,12 @@ var methods = {
 	},
 	
 	upload: function(req, res, flightId) {
+		if(!req.headers['secret'] || req.headers['secret'] !== secret) {
+			console.log("Unauthorized upload try");
+      res.writeHead(401, { 'Connection': 'close' });
+      res.end("Unauthorized");			
+		}
+		
 		var busboy = new Busboy({ headers: req.headers });
 		var files = [];
 		busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
