@@ -26,7 +26,7 @@ case "$1" in
 	mkdir -p /var/run/skyhawq/photos;
     echo -e "Starting $NAME";
 	cd $BASE;
-	$START > $LOG &
+	$START > $LOG 2>&1 &
 	echo $! > $PID;
 	echo "Done!"
 	;;
