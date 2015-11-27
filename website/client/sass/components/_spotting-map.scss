@@ -1,16 +1,29 @@
 /// spotting map
+@include keyframes(slideUp) {
+    from {
+        @include transform(translateY(0));
+    }
+    to {
+        @include transform(translateY(-100%));
+    }
+}
 
 .spotting-map {
-
     .canvas {
         max-width: 400px;
         max-height: 400px;
         overflow: hidden;
     }
     .marker {
+        $marker-size: 110px;
+
         position: absolute;
-        width: 110px;
-        height: 110px;
+        @include transform(translate(-50%, -50%));
+        border-radius: 50%;
+        width: $marker-size;
+        height: $marker-size;
+        line-height: $marker-size;
+        text-align: center;
 
         &.is-selected {
             &::after {
@@ -23,6 +36,14 @@
                 content: '';
             }
         }
+    }
+
+    .marker-controls {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        @include animation(slideUp 0.2s ease-in-out forwards);
     }
 }
 

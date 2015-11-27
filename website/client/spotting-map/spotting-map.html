@@ -6,13 +6,18 @@
                 {{#with image}}
                     <img src="{{ source }}" width="600" height="600">
                     {{#each markers}}
-                        <span class="marker" style="top: {{y}}px; left: {{x}}px;">
-                            {{type}}
+                        <span class="marker marker-{{type}}" style="top: {{y}}px; left: {{x}}px;" title="{{description}}">
+                            {{description}}
                         </span>
                     {{/each}}
                 {{/with}}
             </div>
-
+            {{#with selectedMarker}}
+                <div class="marker-controls">
+                    <button class="button-edit" data-do="edit-marker">Edit</button>
+                    <button class="button-remove" data-do="remove-marker">Remove</button>
+                </div>
+            {{/with}}
         </div>
         <div class="controls">
             {{#if newMarker}}

@@ -1,5 +1,6 @@
 var markers = new ReactiveVar([]),
-    newMarker = new ReactiveVar(false),
+    newMarker = new ReactiveVar(null),
+    selectedMarker = new ReactiveVar(null),
     hasPanned = false,
     $panZoomElement;
 
@@ -57,6 +58,9 @@ Template.spottingMap.helpers({
     },
     'newMarker': function () {
         return newMarker.get();
+    },
+    'selectedMarker': function () {
+        return selectedMarker.get();
     }
 });
 
@@ -64,32 +68,36 @@ Template.spottingMap.events({
     'mousemove .image': function () {
         hasPanned = $panZoomElement.panzoom('isPanning');
     },
-    'mouseup .image': function (event) {
+    'click .marker': function (event) {
         var $target = $(event.target),
             selectedClass = 'is-selected',
             markerSelector = '.marker';
 
-        if ($target.is(markerSelector)) {
-            $target.addClass(selectedClass).siblings(markerSelector).removeClass(selectedClass);
-        } else {
-            if (!hasPanned) {
-                var imagePosition = $(event.currentTarget).offset(),
-                    x = event.pageX - imagePosition.left,
-                    y = event.pageY - imagePosition.top;
+        $target.toggleClass(selectedClass).siblings(markerSelector).removeClass(selectedClass);
+        selectedMarker.set(null);
+        if ($target.hasClass(selectedClass)) {
+            selectedMarker.set(this);
+            console.info('selectedMarker', this);
+        }
+    },
+    'mouseup .image': function (event) {
+        var $target = $(event.target);
+        if (!hasPanned && !$target.hasClass('marker')) {
+            var imagePosition = $(event.currentTarget).offset(),
+                x = event.pageX - imagePosition.left,
+                y = event.pageY - imagePosition.top;
 
-                // prepare a new marker with translated coordinates:
-                // setting this var 'opens' the marker types menu
-                newMarker.set(getCanvasCoords(x, y));
-            }
+            // prepare a new marker with translated coordinates:
+            // setting this var 'opens' the marker types menu
+            newMarker.set(getCanvasCoords(x, y));
         }
         hasPanned = false;
     },
     /**
      * Handles saving the markers to the current image
-     * @param event
      * @this {{}} The current image
      */
-    'click [data-do=save]': function (event) {
+    'click [data-do=save]': function () {
         Images.update(this._id, {
             '$set': {
                 'markers': markers.get()
@@ -111,13 +119,28 @@ Template.spottingMap.events({
         _markers.push(marker);
         markers.set(_markers);
 
-        newMarker.set(false);
+        newMarker.set(null);
+    },
+    /**
+     * Handles removal of a marker
+     * @this {{}} The marker object to remove
+     */
+    'click [data-do=remove-marker]': function (event) {
+        var _markers = markers.get(),
+            marker = this;
+
+        console.info(_markers);
+        _markers.filter(function (item) {
+            return item.x !== marker.x && item.y !== marker.y;
+        });
+        console.info(_markers);
+
+        markers.set(_markers);
     },
     /**
      * Debugging handler to easily clear all markers on the given image
-     * @param event
      */
-    'click [data-do=clear-markers]': function (event) {
+    'click [data-do=clear-markers]': function () {
         markers.set([]);
     }
 });
