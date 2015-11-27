@@ -11,8 +11,8 @@ function getCanvasCoords(x,y){
 }
 
 Template.spottingMap.helpers({
-    'imageSrc': function () {
-        return Images.findOne().source;
+    'image': function () {
+        return Images.findOne();
     },
     'markers': function () {
         return markers.get()
@@ -39,16 +39,37 @@ Template.spottingMap.events({
             markers.set(tempMarkers);
         }
         hasPanned = false;
+    },
+    /**
+     * @param event
+     * @this {{}} The current image
+     */
+    'click [data-do=save]': function (event) {
+        console.info('saving!');
+        Images.update(this._id, {
+            '$set': {
+                'markers': markers.get()
+            }
+        });
     }
 });
 
-Template.spottingMap.onRendered(function () {
-    /**
-     * Initialize the spotting map
-     */
+Template.spottingMap.onCreated(function () {
+    this.autorun(function (comp) {
+        var currentImage = Images.findOne();
+        console.info(currentImage);
+        if (currentImage) {
+            markers.set(currentImage.markers);
+            comp.stop();
+        }
+    });
+});
 
-    var $container = $(this.firstNode),
+function initPanZoom(element) {
+    var $container = $(element),
         $canvas = $container.find('.canvas');
+
+    console.info('initializing!', element, Images.findOne());
 
     $panZoomElement = $container.find('.image');
 
@@ -71,6 +92,14 @@ Template.spottingMap.onRendered(function () {
             focal: event
         });
     });
+}
 
-    
+
+Template.spottingMap.onRendered(function () {
+    this.autorun(comp => {
+        if (Images.findOne()) {
+            initPanZoom(this.firstNode);
+            comp.stop();
+        }
+    });
 });
