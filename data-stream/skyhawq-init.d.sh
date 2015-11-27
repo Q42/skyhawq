@@ -15,9 +15,9 @@ set -e
 
 # Must be a valid filename
 NAME=skyhawq
-USER=pi
+USER=root
 BASE=/etc/skyhawq;
-START=skyhawq.sh;
+START=/etc/skyhawq/skyhawq.sh;
 LOG=/var/log/skyhawq.log;
 PID=/var/run/skyhawq.pid;
 
@@ -26,14 +26,16 @@ case "$1" in
 	mkdir -p /var/run/skyhawq/photos;
     echo -e "Starting $NAME";
 	cd $BASE;
-	sudo -b -u $USER $START > $LOG & echo $! > $PID;
+	$START > $LOG 2>&1 &
+	echo $! > $PID;
 	echo "Done!"
 	;;
   stop)
     if [ -f "$PID" ]
 	then
 	echo -e "Stopping daemon: $NAME";
-	kill `cat $PID`
+	kill -9 -`cat $PID`
+
     echo "Stopping done!"
 	else
 	echo -e "$NAME is not started (PID not found)"

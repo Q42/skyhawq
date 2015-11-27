@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # GPS
-mkdir -p /var/skyhawq 
+mkdir -p /var/skyhawq
 cd /var/skyhawq
-./gps &
+/etc/skyhawq/gps &
 
 # Photos
 while true
