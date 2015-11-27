@@ -1,0 +1,21 @@
+h1, .h1, .h1 + .subtitle {
+    margin: 0.6em 0;
+    line-height: 0.8;
+    letter-spacing: em(-3px, 52px);
+    font-weight: bold;
+    font-size: em(52px);
+}
+
+h2, .h2, .h2 + .subtitle {
+    font-weight: bold;
+    font-size: em(25px);
+}
+
+.subtitle[class] {
+    margin-top: -0.5em;
+    color: $subtitle-color; 
+}
+
+.centered-text {
+    text-align: center;
+}
