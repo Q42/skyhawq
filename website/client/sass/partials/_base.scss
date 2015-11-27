@@ -1,3 +1,17 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 html {
-    font: 12px Verdana, Arial, sans-serif;
+    background-color: $body-background;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    font: #{$default-font-size}/#{$default-line-height} $default-font-family;
+    letter-spacing: -0.5px;
+}
+
+body {
+    margin: 0;
+    padding: 0 20px;
 }

@@ -1,0 +1,51 @@
+.button {
+    position: relative;
+    display: block;
+    @include appearance(none);
+    margin: 0 0 0.5em;
+    border: 0;
+    border-radius: 3px;
+    width: 100%;
+    background-color: $buttons-background;
+    padding: 12px 15px;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: em(25px);
+    color: $buttons-color;
+
+    &::after {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 2px;
+        height: 7px;
+        box-shadow: 0 2px 0 $buttons-shadow;
+        border-radius: 3px;
+        content: '';
+    }
+
+    &:only-child {
+        margin: 0;
+    }
+}
+
+.action-button {
+    background-color: $action-buttons-background;
+
+    &::after {
+        box-shadow: 0 2px 0 $action-buttons-shadow;
+    }
+}
+
+@include when(tablet-portrait) {
+    .button {
+        display: inline-block;
+        width: auto;
+
+        &.is-full-width {
+            display: block;
+        }
+    }
+}

@@ -3,6 +3,9 @@
 
 @import 'mixins/when';
 
-@import 'partials/base';
+@import 'partials/base',
+        'partials/typography',
+        'partials/page-footer';
 
-@import 'components/spotting-map';
+@import 'components/buttons',
+        'components/spotting-map';
