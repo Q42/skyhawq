@@ -9,7 +9,20 @@
     }
     .marker {
         position: absolute;
-        background-color: red;
+        width: 110px;
+        height: 110px;
+
+        &.is-selected {
+            &::after {
+                position: absolute;
+                top: -500px;
+                left: -500px;
+                right: -500px;
+                bottom: -500px;
+                background: url('../img/holed-mask.svg') no-repeat center center;
+                content: '';
+            }
+        }
     }
 }
 
