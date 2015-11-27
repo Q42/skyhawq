@@ -26,7 +26,8 @@ case "$1" in
 	mkdir -p /var/run/skyhawq/photos;
     echo -e "Starting $NAME";
 	cd $BASE;
-	sudo -b -u $USER $START > $LOG & echo $! > $PID;
+	sudo -b -u $USER $START > $LOG;
+	echo $! > $PID;
 	echo "Done!"
 	;;
   stop)
