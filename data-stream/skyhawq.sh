@@ -1,9 +1,12 @@
 #!/bin/sh
 
+trap 'kill -TERM $GPS_ID' TERM
+
 # GPS
 mkdir -p /var/skyhawq
 cd /var/skyhawq
 /etc/skyhawq/gps &
+GPS_ID=$!
 
 # Photos
 while true
@@ -15,3 +18,5 @@ do
 	# sleep
 	sleep 1
 done
+
+wait $GPS_ID
