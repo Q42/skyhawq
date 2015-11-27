@@ -21,3 +21,4 @@ insecure                # Allow all DB writes from clients (for prototyping)
 fourseven:scss          # Scss
 reactive-var            # 
 kadira:flow-router
+kadira:blaze-layout

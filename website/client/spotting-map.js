@@ -50,7 +50,7 @@ function initPanZoom(element) {
 
 Template.spottingMap.helpers({
     'image': function () {
-        return Images.findOne();
+        return currentImage();
     },
     'markers': function () {
         return markers.get();
@@ -124,9 +124,9 @@ Template.spottingMap.events({
 
 Template.spottingMap.onCreated(function () {
     this.autorun(function (comp) {
-        var currentImage = Images.findOne();
-        if (currentImage) {
-            markers.set(currentImage.markers);
+        var img = currentImage();
+        if (img) {
+            markers.set(img.markers);
             comp.stop();
         }
     });
@@ -134,9 +134,16 @@ Template.spottingMap.onCreated(function () {
 
 Template.spottingMap.onRendered(function () {
     this.autorun(comp => {
-        if (Images.findOne()) {
+        if (currentImage()) {
             initPanZoom(this.firstNode);
             comp.stop();
         }
     });
 });
+
+/**
+ * reactive
+ */
+function currentImage() {
+  return Images.findOne(FlowRouter.getParam('imageId'));
+}
