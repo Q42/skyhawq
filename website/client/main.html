@@ -1,24 +1,30 @@
-<head>
-    <title>skyhawq</title>
-</head>
 
-<body>
-<h1 class="h1">help saving</h1>
 
-<p class="subtitle">the orangutan</p>
+<template name="layout1">
+    <head>
+        <title>Skyhawq!</title>
+    </head>
 
-<p>We are going to save the orangutan with the help of the crowd. Skyhawq flies over the forest, sends forest imagery to
-    phones all over the world, the crowd spots and marks the orangutans on it.</p>
+    <body>
+    <h1 class="h1">help saving</h1>
 
-<a href="#" class="button">this is a button</a>
+    <p class="subtitle">the orangutan</p>
 
-<button class="button action-button">this is also a button</button>
+    <p>We are going to save the orangutan with the help of the crowd. Skyhawq flies over the forest, sends forest imagery to
+        phones all over the world, the crowd spots and marks the orangutans on it.</p>
 
-{{> spottingMap}}
+    <a href="#" class="button">this is a button</a>
 
-<footer class="page-footer">
-    <p class="centered-text">
-        <img src="/img/logo-greenpeace.svg" alt="Greenpeace" title="Greenpeace" />
-    </p>
-</footer>
-</body>
+    <button class="button action-button">this is also a button</button>
+
+    {{> Template.dynamic template=main}}
+
+    <footer class="page-footer">
+        <p class="centered-text">
+            <img src="/img/logo-greenpeace.svg" alt="Greenpeace" title="Greenpeace" />
+        </p>
+    </footer>
+    </body>
+
+
+</template>

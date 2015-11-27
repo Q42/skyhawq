@@ -50,7 +50,7 @@ function initPanZoom(element) {
 
 Template.spottingMap.helpers({
     'image': function () {
-        return Images.findOne();
+        return currentImage();
     },
     'markers': function () {
         return markers.get();
@@ -65,14 +65,22 @@ Template.spottingMap.events({
         hasPanned = $panZoomElement.panzoom('isPanning');
     },
     'mouseup .image': function (event) {
-        if (!hasPanned) {
-            var imagePosition = $(event.currentTarget).offset(),
-                x = event.pageX - imagePosition.left,
-                y = event.pageY - imagePosition.top;
+        var $target = $(event.target),
+            selectedClass = 'is-selected',
+            markerSelector = '.marker';
 
-            // prepare a new marker with translated coordinates:
-            // setting this var 'opens' the marker types menu
-            newMarker.set(getCanvasCoords(x, y));
+        if ($target.is(markerSelector)) {
+            $target.addClass(selectedClass).siblings(markerSelector).removeClass(selectedClass);
+        } else {
+            if (!hasPanned) {
+                var imagePosition = $(event.currentTarget).offset(),
+                    x = event.pageX - imagePosition.left,
+                    y = event.pageY - imagePosition.top;
+
+                // prepare a new marker with translated coordinates:
+                // setting this var 'opens' the marker types menu
+                newMarker.set(getCanvasCoords(x, y));
+            }
         }
         hasPanned = false;
     },
@@ -116,9 +124,9 @@ Template.spottingMap.events({
 
 Template.spottingMap.onCreated(function () {
     this.autorun(function (comp) {
-        var currentImage = Images.findOne();
-        if (currentImage) {
-            markers.set(currentImage.markers);
+        var img = currentImage();
+        if (img) {
+            markers.set(img.markers);
             comp.stop();
         }
     });
@@ -126,9 +134,16 @@ Template.spottingMap.onCreated(function () {
 
 Template.spottingMap.onRendered(function () {
     this.autorun(comp => {
-        if (Images.findOne()) {
+        if (currentImage()) {
             initPanZoom(this.firstNode);
             comp.stop();
         }
     });
 });
+
+/**
+ * reactive
+ */
+function currentImage() {
+  return Images.findOne(FlowRouter.getParam('imageId'));
+}
