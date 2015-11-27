@@ -17,7 +17,7 @@ set -e
 NAME=skyhawq
 USER=pi
 BASE=/etc/skyhawq;
-START=skyhawq.sh;
+START=/etc/skyhawq/skyhawq.sh;
 LOG=/var/log/skyhawq.log;
 PID=/var/run/skyhawq.pid;
 
