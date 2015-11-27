@@ -1,0 +1,18 @@
+/// spotting map
+
+.spotting-map {
+
+    .canvas {
+        max-width: 400px;
+        max-height: 400px;
+        overflow: hidden;
+    }
+    .marker {
+        position: absolute;
+        background-color: red;
+    }
+}
+
+@include when(tablet) {
+
+}

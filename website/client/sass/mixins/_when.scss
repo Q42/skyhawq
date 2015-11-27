@@ -1,0 +1,97 @@
+// Responds to the given medium
+// @param string $medium the target medium
+// @param string $scope either up, down or only specifying the scope of the query
+// @param string [$orientation] either portrait or landscape
+@mixin when($medium, $scope: up, $orientation: none) {
+    // settings
+    $base-media-query: "only screen" !default;
+
+    // default ranges
+    $mobile-range: (0, em(640px)) !default;
+    $mobile-portrait-range: (0, em(320px)) !default;
+    $mobile-landscape-range: (em(321px), em(640px)) !default;
+    $tablet-portrait-range: (em(641px), em(767px)) !default;
+    $tablet-landscape-range: (em(768px), em(1024px)) !default;
+    $desktop-range: (em(1025px), em(1440px)) !default;
+    $large-desktop-range: (em(1441px), em(1920px)) !default;
+    $xxlarge-range: (em(1921px)) !default;
+
+    // internals
+    $query: $base-media-query;
+    $min: 0;
+    $max: 0;
+
+    // handheld media
+    @if index(mobile, $medium) {
+        // when using a mobile query, i assume you _only_ want mobile since a min-width of 0 is kinda useless.
+        $max: max($mobile-range...);
+    } @else if index(mobile-portrait, $medium) {
+        // when using a mobile query, i assume you _only_ want mobile since a min-width of 0 is kinda useless.
+        $max: max($mobile-portrait-range...);
+    } @else if index(mobile-landscape, $medium) {
+        @if index(up only, $scope) {
+            $min: min($mobile-landscape-range...);
+        }
+        @if index(down only, $scope) {
+            $max: max($mobile-landscape-range...);
+        }
+    }
+        // tablets
+    @else if $medium == tablet {
+        @if index(up only, $scope) {
+            $min: min($tablet-portrait-range...);
+        }
+        @if index(down only, $scope) {
+            $max: max($tablet-landscape-range...);
+        }
+    } @else if $medium == tablet-portrait {
+        @if index(up only, $scope) {
+            $min: min($tablet-portrait-range...);
+        }
+        @if index(down only, $scope) {
+            $max: max($tablet-portrait-range...);
+        }
+    } @else if $medium ==  tablet-landscape {
+        @if index(up only, $scope) {
+            $min: min($tablet-landscape-range...);
+        }
+        @if index(down only, $scope) {
+            $max: max($tablet-landscape-range...);
+        }
+    }
+        // desktop normal
+    @else if index(desktop, $medium) {
+        @if index(up only, $scope) {
+            $min: min($desktop-range...);
+        }
+        @if index(down only, $scope) {
+            $max: max($desktop-range...);
+        }
+    } @else if index(large-desktop, $medium) {
+        @if index(up only, $scope) {
+            $min: min($large-desktop-range...);
+        }
+        @if index(down only, $scope) {
+            $max: max($large-desktop-range...);
+        }
+    }
+
+    @if $orientation == landscape {
+        $query: $query + " and (orientation: landscape)";
+    } @else if $orientation == portrait {
+        $query: $query + " and (orientation: portrait)";
+    }
+
+    @if $min > 0 {
+        $query: $query + " and (min-width: #{$min})";
+    }
+    @if $max > 0 {
+        $query: $query + " and (max-width: #{$max})";
+    }
+
+    // @debug "#{$medium} #{$scope} min: #{$min}, max: #{$max}, orientation: #{$orientation}";
+
+    @media #{$query} {
+        @content;
+    }
+}

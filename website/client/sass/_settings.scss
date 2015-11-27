@@ -1,0 +1,13 @@
+// Base font size (body font-size)
+$em-base: 14px;
+$base-line-height: 1.5;
+
+// Media query settings (used in when() mixin):
+$mobile-range: (0, 639px);
+$mobile-portrait-range: (0, 320px);
+$mobile-landscape-range: (320px, 639px);
+
+$tablet-portrait-range: (640px, 768px);
+$tablet-landscape-range: (769px, 1024px);
+$desktop-range: (1025px, 1120px);
+$large-desktop-range: (1121px, 1440px);

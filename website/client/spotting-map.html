@@ -1,0 +1,22 @@
+<template name="spottingMap">
+    <div class="spotting-map">
+        <div class="canvas">
+            <div class="image">
+                <img src="{{ imageSrc }}">
+                {{#each markers}}
+                <span class="marker" style="top: {{y}}px; left: {{x}}px;">
+                    marker
+                </span>
+                {{/each}}
+            </div>
+        </div>
+        <div class="spotting-tools">
+        </div>
+        <div class="controls">
+            <button class="zoom-in" data-do="zoom-in">Zoom in</button>
+            <button class="zoom-out" data-do="zoom-out">Zoom out</button>
+            <input type="range" name="zoom" class="zoom-range" data-do="zoom-range">
+            <button class="reset" data-do="reset">Reset</button>
+        </div>
+    </div>
+</template>
