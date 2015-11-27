@@ -34,7 +34,8 @@ case "$1" in
     if [ -f "$PID" ]
 	then
 	echo -e "Stopping daemon: $NAME";
-	kill -9 -`cat $PID`
+	kill -9 `cat $PID`
+	rm $PID
 
     echo "Stopping done!"
 	else
