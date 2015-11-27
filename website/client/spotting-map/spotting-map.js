@@ -1,7 +1,27 @@
+/**
+ * Currently active set of markers
+ * @type {ReactiveVar} Array
+ */
 var markers = new ReactiveVar([]),
+    /**
+     * The marker that is currently being 'edited'
+     * @type {ReactiveVar} Object
+     */
     editMarker = new ReactiveVar(null),
+    /**
+     * The currently selected marker
+     * @type {ReactiveVar} Object
+     */
     selectedMarker = new ReactiveVar(null),
+    /**
+     * State boolean to check if the user has panned between a mouse down and a mouse up
+     * @type {boolean}
+     */
     hasPanned = false,
+    /**
+     * The container used for the PanZoom plugin
+     * @type {jQuery}
+     */
     $panZoomElement;
 
 /**
@@ -10,7 +30,7 @@ var markers = new ReactiveVar([]),
  * @param {Number} y
  * @returns {{x: number, y: number}}
  */
-function getCanvasCoords(x,y){
+function getCanvasCoords(x, y) {
     var matrix = $panZoomElement.panzoom("getMatrix");
 
     return {
@@ -50,11 +70,11 @@ function initPanZoom(element) {
 }
 
 /**
- * Removes the marker with the given X/Y coordinates
- * @param x
- * @param y
+ * Removes any markers with the given coordinates
+ * @param {Number} x
+ * @param {Number} y
  */
-function removeMarkerByXY(x, y) {
+function removeMarkerByCoordinate(x, y) {
     var _markers = markers.get();
 
     _markers = _markers.filter(function (item) {
@@ -127,13 +147,17 @@ Template.spottingMap.events({
         editMarker.set(marker);
     },
     /**
-     * Handles adding of a marker to the map.
+     * Handles editing of a marker to the map.
      * @param event
      */
     'click [data-do=save-marker]': function (event) {
-        var _markers = markers.get(),
-            $button = $(event.currentTarget),
-            marker = editMarker.get();
+        var $button = $(event.currentTarget),
+            marker = editMarker.get(),
+            _markers;
+
+        removeMarkerByCoordinate(marker.x, marker.y);
+
+        _markers = markers.get();
 
         marker.type = $button.data('marker-type');
         marker.description = $button.text();
@@ -150,7 +174,7 @@ Template.spottingMap.events({
     'click [data-do=remove-marker]': function () {
         var marker = this;
 
-        removeMarkerByXY(marker.x, marker.y);
+        removeMarkerByCoordinate(marker.x, marker.y);
     },
     /**
      * Debugging handler to easily clear all markers on the given image
@@ -183,5 +207,5 @@ Template.spottingMap.onRendered(function () {
  * reactive
  */
 function currentImage() {
-  return Images.findOne(FlowRouter.getParam('imageId'));
+    return Images.findOne(FlowRouter.getParam('imageId'));
 }
