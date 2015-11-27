@@ -1,5 +1,6 @@
 var markers = new ReactiveVar([]),
-    newMarker = new ReactiveVar(false),
+    editMarker = new ReactiveVar(null),
+    selectedMarker = new ReactiveVar(null),
     hasPanned = false,
     $panZoomElement;
 
@@ -48,6 +49,21 @@ function initPanZoom(element) {
     });
 }
 
+/**
+ * Removes the marker with the given X/Y coordinates
+ * @param x
+ * @param y
+ */
+function removeMarkerByXY(x, y) {
+    var _markers = markers.get();
+
+    _markers = _markers.filter(function (item) {
+        return item.x !== x && item.y !== y;
+    });
+
+    markers.set(_markers);
+}
+
 Template.spottingMap.helpers({
     'image': function () {
         return currentImage();
@@ -55,8 +71,11 @@ Template.spottingMap.helpers({
     'markers': function () {
         return markers.get();
     },
-    'newMarker': function () {
-        return newMarker.get();
+    'editMarker': function () {
+        return editMarker.get();
+    },
+    'selectedMarker': function () {
+        return selectedMarker.get();
     }
 });
 
@@ -64,32 +83,35 @@ Template.spottingMap.events({
     'mousemove .image': function () {
         hasPanned = $panZoomElement.panzoom('isPanning');
     },
-    'mouseup .image': function (event) {
+    'click .marker': function (event) {
         var $target = $(event.target),
             selectedClass = 'is-selected',
             markerSelector = '.marker';
 
-        if ($target.is(markerSelector)) {
-            $target.addClass(selectedClass).siblings(markerSelector).removeClass(selectedClass);
-        } else {
-            if (!hasPanned) {
-                var imagePosition = $(event.currentTarget).offset(),
-                    x = event.pageX - imagePosition.left,
-                    y = event.pageY - imagePosition.top;
+        $target.toggleClass(selectedClass).siblings(markerSelector).removeClass(selectedClass);
+        selectedMarker.set(null);
+        if ($target.hasClass(selectedClass)) {
+            selectedMarker.set(this);
+        }
+    },
+    'mouseup .image': function (event) {
+        var $target = $(event.target);
+        if (!hasPanned && !$target.hasClass('marker')) {
+            var imagePosition = $(event.currentTarget).offset(),
+                x = event.pageX - imagePosition.left,
+                y = event.pageY - imagePosition.top;
 
-                // prepare a new marker with translated coordinates:
-                // setting this var 'opens' the marker types menu
-                newMarker.set(getCanvasCoords(x, y));
-            }
+            // prepare a new marker with translated coordinates:
+            // setting this var 'opens' the marker types menu
+            editMarker.set(getCanvasCoords(x, y));
         }
         hasPanned = false;
     },
     /**
      * Handles saving the markers to the current image
-     * @param event
      * @this {{}} The current image
      */
-    'click [data-do=save]': function (event) {
+    'click [data-do=save]': function () {
         Images.update(this._id, {
             '$set': {
                 'markers': markers.get()
@@ -97,13 +119,21 @@ Template.spottingMap.events({
         });
     },
     /**
+     * Handles editing of a marker
+     */
+    'click [data-do=edit-marker]': function () {
+        var marker = this;
+
+        editMarker.set(marker);
+    },
+    /**
      * Handles adding of a marker to the map.
      * @param event
      */
-    'click [data-do=add-marker]': function (event) {
+    'click [data-do=save-marker]': function (event) {
         var _markers = markers.get(),
             $button = $(event.currentTarget),
-            marker = newMarker.get();
+            marker = editMarker.get();
 
         marker.type = $button.data('marker-type');
         marker.description = $button.text();
@@ -111,13 +141,21 @@ Template.spottingMap.events({
         _markers.push(marker);
         markers.set(_markers);
 
-        newMarker.set(false);
+        editMarker.set(null);
+    },
+    /**
+     * Handles removal of a marker
+     * @this {{}} The marker object to remove
+     */
+    'click [data-do=remove-marker]': function () {
+        var marker = this;
+
+        removeMarkerByXY(marker.x, marker.y);
     },
     /**
      * Debugging handler to easily clear all markers on the given image
-     * @param event
      */
-    'click [data-do=clear-markers]': function (event) {
+    'click [data-do=clear-markers]': function () {
         markers.set([]);
     }
 });
