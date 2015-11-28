@@ -15,11 +15,6 @@ var port   = process.env.PORT   || 8000;
 
 childProcess.execSync("mkdir -p "+folder);
 
-function json(res, data, status) {
-	res.writeHead(status || 200, {'Content-Type': 'application/json' });
-	res.end(JSON.stringify(data));
-}
-
 var methods = {
 	
 	index: function(req, res){
@@ -44,7 +39,11 @@ var methods = {
 	
 	flight: function(req, res, flightId) {
 		var p = path.join(folder, flightId);
-		if(!/^[a-z0-9\-]+$/.test(flightId) || !fs.existsSync(p) || !fs.statSync(p).isDirectory()) {
+		try {
+			if(!/^[a-z0-9\-]+$/.test(flightId) || !fs.statSync(p) || !fs.statSync(p).isDirectory()) {
+				throw new Error("Wrong file!");
+			}
+		} catch (e) {
 			return json(res, {
 				"error": "Invalid flight name"
 			}, 400);
@@ -71,18 +70,21 @@ var methods = {
 			return res.end();
 		}
     var file = path.join(folder, filename);
-    path.exists(file, function(exists) {
-        if(!exists) {
-            console.log("not exists: " + file);
-            res.writeHead(200, {'Content-Type': 'text/plain'});
-            res.write('404 Not Found\n');
-            res.end();
-        }
-        var mimeType = mimeTypes[path.extname(file).split(".")[1]];
-        res.writeHead(200, mimeType);
-        var fileStream = fs.createReadStream(file);
-        fileStream.pipe(res);
-    });
+		try {
+			var stat = fs.statSync(file);
+			if(!stat || !stat.isFile()) {
+				throw new Error("Wrong file!");
+			}
+			var mimeType = mimeTypes[path.extname(file).split(".")[1]];
+			res.writeHead(200, mimeType);
+			var fileStream = fs.createReadStream(file);
+			fileStream.pipe(res);
+		} catch (e) {
+			console.log("not exists: " + file);
+			res.writeHead(200, {'Content-Type': 'text/plain'});
+			res.write('404 Not Found\n');
+			res.end();
+		}
 	},
 	
 	upload: function(req, res, flightId) {
@@ -152,4 +154,16 @@ function noDotFiles(f){
 
 Array.prototype.last = function(){
 	return this[this.length - 1];
+}
+
+var mimeTypes = {
+    "jpeg": "image/jpeg",
+    "jpg": "image/jpeg",
+		"txt": "text/plain",
+		"csv": "text/plain",
+};
+
+function json(res, data, status) {
+	res.writeHead(status || 200, {'Content-Type': 'application/json' });
+	res.end(JSON.stringify(data));
 }
