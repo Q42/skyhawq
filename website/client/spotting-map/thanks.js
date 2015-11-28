@@ -5,7 +5,7 @@ Template.thanks.helpers({
 
     var lines = _.chain(editedMarkers).countBy('description').pairs().value().map(function (item) {
       var prefix = counts[item[1]];
-						if (item[1] == 1 && /^(a|o|u|i|e)/.test(item[0].toLowerCase()))
+						if (item[1] == 1 && /^(a|o|u|i|e)/i.test(item[0].trim()))
         prefix = "an";
 						return prefix + " " + (item[1] == 1 ? item[0] : item[0].trim() + "s");
     });
