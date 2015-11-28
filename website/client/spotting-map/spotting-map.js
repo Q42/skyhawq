@@ -169,7 +169,7 @@ Template.spottingMap.events({
         });
         Session.set('addedMarkers', differentMarkers);
         markImageAsViewed();
-        FlowRouter.go(FlowRouter.path('thanks'));
+        Router.go('thanks');
     },
     /**
      * Handles editing of a marker
@@ -218,7 +218,7 @@ Template.spottingMap.events({
     'click [data-do=next]': function () {
         markImageAsViewed();
 
-        FlowRouter.go('next');
+        Router.go('next');
     }
 });
 
@@ -245,7 +245,8 @@ Template.spottingMap.onRendered(function () {
  * reactive
  */
 function currentImage() {
-    var imageId = FlowRouter.getParam('imageId');
+	console.log("CurrentImage from route", Router.current().name);
+    var imageId = Router.current().params.imageId;
     if (!imageId) {
         imageId = window.location.href.split('/').pop();
     }

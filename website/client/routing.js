@@ -1,29 +1,33 @@
+Router.configure({
+  layoutTemplate: 'layout1'
+});
+
 Router.route('/image/next', function () {
   console.log("Redirect!");
 	var image = Images.findOne({viewed: {$ne: Meteor.connection._lastSessionId}});
 	if(image)
-		this.go("image", {imageId: image._id});
+		this.redirect("image", {imageId: image._id});
 	else
-		this.go("/");
+		this.redirect("/");
 }, {
 	name: "next"
 });
 
 Router.route('/image/:imageId', function () {
-		console.log(FlowRouter.getParam("imageId"));
-		BlazeLayout.render('layout1', {main: "spottingMap"});
+		console.log('image route', this.params.imageId);
+		this.render('spottingMap');
 }, {
 	name: 'image'
 });
 
 Router.route('/thanks', function () {
-		BlazeLayout.render('layout1', {main: "thanks"});
+		this.render("thanks");
 }, {
 	name: 'thanks'
 });
 
 Router.route('/', function () {
-		BlazeLayout.render('layout1', {main: "donate"});
+		this.render("donate");
 }, {
 	name: 'home',
 });
