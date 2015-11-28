@@ -123,7 +123,7 @@ Template.spottingMap.events({
     'mousemove .image': function () {
         hasPanned = $panZoomElement.panzoom('isPanning');
     },
-    'click .marker': function (event) {
+    'click .marker, touchend .marker': function (event) {
         var $target = $(event.target),
             selectedClass = 'is-selected',
             markerSelector = '.marker';
@@ -211,6 +211,8 @@ Template.spottingMap.events({
         var marker = this;
 
         removeMarkerByCoordinate(marker.x, marker.y);
+        editMarker.set(null);
+        selectedMarker.set(null);
     },
     /**
      * Debugging handler to easily clear all markers on the given image
