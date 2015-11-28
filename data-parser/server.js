@@ -41,7 +41,7 @@ var methods = {
 	
 	flight: function(req, res, flightId) {
 		var p = path.join(folder, flightId);
-		if(!/^[a-z0-9\-]+$/.test(flightId) || !saveStat(p) || !saveStat.isDirectory()) {
+		if(!/^[a-z0-9\-]+$/.test(flightId) || !saveStat(p) || !saveStat(p).isDirectory()) {
 			return json(res, {
 				"error": "Invalid flight name"
 			}, 400);
