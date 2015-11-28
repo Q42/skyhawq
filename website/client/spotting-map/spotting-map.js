@@ -120,7 +120,7 @@ Template.spottingMap.helpers({
 });
 
 Template.spottingMap.events({
-    'mousemove .image': function () {
+    'mousemove .image, touchmove .image': function () {
         hasPanned = $panZoomElement.panzoom('isPanning');
     },
     'click .marker, touchend .marker': function (event) {
