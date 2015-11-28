@@ -2,7 +2,8 @@ var http = require('http'),
     path = require('path'),
     os = require('os'),
     fs = require('fs'),
-		url = require('url');
+		url = require('url'),
+		Parse = require('./parse').Parse;
 
 var Busboy = require('busboy');
 var md5File = require('md5-file');
@@ -40,11 +41,7 @@ var methods = {
 	
 	flight: function(req, res, flightId) {
 		var p = path.join(folder, flightId);
-		try {
-			if(!/^[a-z0-9\-]+$/.test(flightId) || !fs.statSync(p) || !fs.statSync(p).isDirectory()) {
-				throw new Error("Wrong file!");
-			}
-		} catch (e) {
+		if(!/^[a-z0-9\-]+$/.test(flightId) || !saveStat(p) || !saveStat.isDirectory()) {
 			return json(res, {
 				"error": "Invalid flight name"
 			}, 400);
@@ -71,21 +68,16 @@ var methods = {
 			return res.end();
 		}
     var file = path.join(folder, filename);
-		try {
-			var stat = fs.statSync(file);
-			if(!stat || !stat.isFile()) {
-				throw new Error("Wrong file!");
-			}
-			var mimeType = mimeTypes[path.extname(file).split(".")[1]];
-			res.writeHead(200, mimeType);
-			var fileStream = fs.createReadStream(file);
-			fileStream.pipe(res);
-		} catch (e) {
+		if(!saveStat(file) || !saveStat(file).isFile()) {
 			console.log("not exists: " + file);
 			res.writeHead(200, {'Content-Type': 'text/plain'});
 			res.write('404 Not Found\n');
 			res.end();
 		}
+		var mimeType = mimeTypes[path.extname(file).split(".")[1]];
+		res.writeHead(200, mimeType);
+		var fileStream = fs.createReadStream(file);
+		fileStream.pipe(res);
 	},
 	
 	upload: function(req, res, flightId) {
@@ -113,8 +105,28 @@ var methods = {
 			notifyChanged(flightId, files);
     });
     return req.pipe(busboy);
-	}
+	},
 	
+	serveFlightPath(req, res, flightId) {
+		var gps = path.join(folder, flightId, "gps.txt");
+		var dir = path.join(folder, flightId);
+		if(saveStat(gps)) {
+			var flight = Parse(gps, dir);
+			json(res, flight);
+		} else {
+      res.writeHead(404, { 'Connection': 'close' });
+      res.end("Not yet available. Wait for gps.txt to be uploaded.");
+		}
+	}
+}
+
+function saveStat(file) {
+	try {
+		var stat = fs.statSync(file);
+		return stat;
+	} catch (e) {
+		return false;
+	}
 }
 
 function notifyChanged(flightId, files) {
@@ -136,6 +148,9 @@ var server = http.createServer(function(req, res) {
 			if(req.url.indexOf("/flights/") == 0 && req.url.length > "/flights/".length) {
 				var id = req.url.substr("/flights/".length);
 				if(id.indexOf("/") > 0) {
+					if(id.split("/")[1] == 'path') {
+						return methods.serveFlightPath(req, res, id.split("/")[0]);
+					}
 					return methods.serveFile(req, res, req.url.substr("/flights/".length));
 				}
 				return methods.flight(req, res, id);
