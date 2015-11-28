@@ -134,12 +134,15 @@ Template.spottingMap.events({
             selectedMarker.set(this);
         }
     },
-    'mouseup .image': function (event) {
-        var $target = $(event.target);
+    'mouseup .image, touchend .image': function (event) {
+        var $target = $(event.target),
+            pageX = event.type === 'mouseup' ? event.pageX : event.changedTouches[0].pageX,
+            pageY = event.type === 'mouseup' ? event.pageY : event.changedTouches[0].pageY;
+
         if (!hasPanned && !$target.hasClass('marker')) {
             var imagePosition = $(event.currentTarget).offset(),
-                x = event.pageX - imagePosition.left,
-                y = event.pageY - imagePosition.top;
+                x = pageX - imagePosition.left,
+                y = pageY - imagePosition.top;
 
             // prepare a new marker with translated coordinates:
             // setting this var 'opens' the marker types menu
