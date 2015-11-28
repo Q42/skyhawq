@@ -4,19 +4,26 @@ h1, .h1, .h1 + .subtitle {
     letter-spacing: em(-3px, 52px);
     font-weight: bold;
     font-size: em(52px);
-    color: $title-color;
 }
 
 h2, .h2, .h2 + .subtitle {
     margin: 0.6em 0;
     font-weight: bold;
     font-size: em(35px);
-    color: $title-color;
+    letter-spacing: em(-3px, 52px);
 }
 
 .subtitle[class] {
+    display: block;
     margin-top: -0.5em;
-    color: $subtitle-color; 
+    color: $subtitle-color;
+
+    .h1 & {
+        margin-top: 0.15em;
+    }
+    .h2 & {
+        margin-top: -0.3em;
+    }
 }
 
 .centered-text {
