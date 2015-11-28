@@ -9,6 +9,10 @@ chmod +x /etc/skyhawq/skyhawq.sh
 chmod +x /etc/init.d/skyhawq
 chown root:root /etc/init.d/skyhawq
 
+# install network up script
+cp skyhawq.upload.sh /etc/network/if-up.d/skyhawq.upload.sh
+chmod +x /etc/network/if-up.d/skyhawq.upload.sh
+
 # binaries
 cd gps-dumper
 make
