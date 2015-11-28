@@ -18,6 +18,7 @@ var markers = new ReactiveVar([]),
      * @type {boolean}
      */
     hasPanned = false,
+    hasZoomed = false,
     /**
      * The container used for the PanZoom plugin
      * @type {jQuery}
@@ -54,6 +55,8 @@ function initPanZoom(element) {
         $zoomOut: $container.find('[data-do=zoom-out]'),
         $zoomRange: $container.find('[data-do=zoom-range]'),
         $reset: $container.find('[data-do=reset]')
+    }).on('panzoomzoom', function () {
+        hasZoomed = true;
     });
 
     $canvas.on('mousewheel.focal dblclick', function (event) {
@@ -139,7 +142,7 @@ Template.spottingMap.events({
             pageX = event.type === 'mouseup' ? event.pageX : event.changedTouches[0].pageX,
             pageY = event.type === 'mouseup' ? event.pageY : event.changedTouches[0].pageY;
 
-        if (!hasPanned && !$target.hasClass('marker')) {
+        if (!hasPanned && !hasZoomed && !$target.hasClass('marker')) {
             var imagePosition = $(event.currentTarget).offset(),
                 x = pageX - imagePosition.left,
                 y = pageY - imagePosition.top;
@@ -148,7 +151,7 @@ Template.spottingMap.events({
             // setting this var 'opens' the marker types menu
             editMarker.set(getCanvasCoords(x, y));
         }
-        hasPanned = false;
+        hasPanned = hasZoomed = false;
     },
     /**
      * Handles saving the markers to the current image
