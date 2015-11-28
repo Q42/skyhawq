@@ -43,7 +43,7 @@ var methods = {
 	
 	flight: function(req, res, flightId) {
 		var p = path.join(folder, flightId);
-		if(!/^[a-z]+$/.test(flightId) || !fs.existsSync(p) || !fs.stat(p).isDirectory()) {
+		if(!/^[a-z]+$/.test(flightId) || !fs.existsSync(p) || !fs.statSync(p).isDirectory()) {
 			return json(res, {
 				"error": "Invalid flight name"
 			}, 400);
@@ -92,28 +92,33 @@ var methods = {
 }
 
 http.createServer(function(req, res) {
-	
-	// View
-	if (req.method === 'GET') {
-		if (req.url == "/flights") {
-			return methods.list(req, res);
+	try {
+		// View
+		if (req.method === 'GET') {
+			if (req.url == "/flights") {
+				return methods.list(req, res);
+			}
+			if(req.url.indexOf("/flights/") == 0 && req.url.length > "/flights/".length) {
+				var id = req.url.substr("/flights/".length);
+				return methods.flight(req, res, id);
+			}
+			return methods.index(req, res);
 		}
-		if(req.url.indexOf("/flights/") == 0 && req.url.length > "/flights/".length) {
-			var id = req.url.substr("/flights/".length);
-			return methods.flight(req, res, id);
+		
+		// Upload
+		if (req.method === 'POST' && req.url.indexOf("/upload/") == 0) {
+			var id = req.url.substr("/upload/".length);
+			return methods.upload(req, res, id);
 		}
-		return methods.index(req, res);
+		
+		// 404
+		res.writeHead(404);
+		res.end();
+	} catch(e) {
+		console.error(e);
+	  res.writeHead(500);
+  	res.end("Internal Server Error");
 	}
-	
-	// Upload
-  if (req.method === 'POST' && req.url.indexOf("/upload/") == 0) {
-		var id = req.url.substr("/upload/".length);
-		return methods.upload(req, res, id);
-  }
-	
-	// 404
-  res.writeHead(404);
-  res.end();
 }).listen(port, function() {
   console.log('Listening for requests');
 });
