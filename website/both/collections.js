@@ -2,7 +2,8 @@ Images = new Mongo.Collection('images');
 Flights = new Mongo.Collection('flights');
 
 var basePath = 'http://greenpeace.hermanbanken.nl/flights/',
-    flightId = '2';
+    flightId = '2',
+    skip = 290;
 
 if (Meteor.isServer && Images.find({flightId: flightId+"v2"}).count() === 0) {
     HTTP.get(basePath + flightId + '/' + 'path', {}, function (error, result) {

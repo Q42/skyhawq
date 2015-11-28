@@ -9,7 +9,7 @@
             {{/with}}
             <div class="image">
                 {{#with image}}
-                    <img src="{{ source }}" width="600" height="600">
+                    <img src="{{ source }}">
                     {{#each markers}}
                         <span class="marker marker-{{type}}" style="top: {{y}}px; left: {{x}}px;" title="{{description}}">
                             {{description}}
@@ -19,8 +19,8 @@
             </div>
             {{#with selectedMarker}}
                 <div class="marker-controls">
-                    <button class="button-edit" data-do="edit-marker">Edit</button>
-                    <button class="button-remove" data-do="remove-marker">Remove</button>
+                    <button class="control-button button-edit" data-do="edit-marker">change</button>
+                    <button class="control-button button-remove" data-do="remove-marker">delete marker</button>
                 </div>
             {{/with}}
         </div>
@@ -33,15 +33,13 @@
                     </header>
                     <ul class="marker-menu buttons-list no-list">
                         <li class="item">
-                            <button data-do="save-marker" data-marker-type="orangutan" class="button"> Orangutan
-                            </button>
+                            <button data-do="save-marker" data-marker-type="orangutan" class="button">Orangutan</button>
                         </li>
                         <li class="item">
                             <button data-do="save-marker" data-marker-type="leopard" class="button">Leopard</button>
                         </li>
                         <li class="item">
-                            <button data-do="save-marker" data-marker-type="rhinoceros" class="button"> Rhinoceros
-                            </button>
+                            <button data-do="save-marker" data-marker-type="rhinoceros" class="button">Rhinoceros</button>
                         </li>
                         <li class="item">
                             <button data-do="save-marker" data-marker-type="tiger" class="button">Tiger</button>
@@ -53,22 +51,16 @@
                             <button data-do="save-marker" data-marker-type="gibbon" class="button">Gibbon</button>
                         </li>
                         <li class="item">
-                            <button data-do="save-marker" data-marker-type="palm-oil-factory" class="button"> Palm oil
-                                factory
-                            </button>
+                            <button data-do="save-marker" data-marker-type="palm-oil-factory" class="button">Palm oil factory</button>
                         </li>
                         <li class="item">
-                            <button data-do="save-marker" data-marker-type="worker" class="button">Workers on the ground
-                            </button>
+                            <button data-do="save-marker" data-marker-type="worker" class="button">Workers on the ground</button>
                         </li>
                         <li class="item">
-                            <button data-do="save-marker" data-marker-type="vehicle" class="button">Car or
-                                truck
-                            </button>
+                            <button data-do="save-marker" data-marker-type="vehicle" class="button">Car or truck</button>
                         </li>
                         <li class="item">
-                            <button data-do="save-marker" data-marker-type="village" class="button">Village
-                            </button>
+                            <button data-do="save-marker" data-marker-type="village" class="button">Village</button>
                         </li>
                         <li class="item">
                             <button data-do="save-marker" data-marker-type="dunno" class="button">?</button>
@@ -80,7 +72,11 @@
             {{#with image}}
                 {{#if markersEdited}}
                     <div class="action-buttons">
-                        <button  class="button button-save" data-do="save">save this spot!</button>
+                        {{#if selectedMarker}}
+                            <!-- nothing -->
+                        {{else}}
+                            <button  class="button button-save" data-do="save">save this spot!</button>
+                        {{/if}}
                     </div>
                 {{else}}
                     <div class="action-buttons">

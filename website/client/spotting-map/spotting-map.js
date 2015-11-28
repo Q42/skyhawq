@@ -18,6 +18,7 @@ var markers = new ReactiveVar([]),
      * @type {boolean}
      */
     hasPanned = false,
+    hasZoomed = false,
     /**
      * The container used for the PanZoom plugin
      * @type {jQuery}
@@ -54,6 +55,8 @@ function initPanZoom(element) {
         $zoomOut: $container.find('[data-do=zoom-out]'),
         $zoomRange: $container.find('[data-do=zoom-range]'),
         $reset: $container.find('[data-do=reset]')
+    }).on('panzoomzoom', function () {
+        hasZoomed = true;
     });
 
     $canvas.on('mousewheel.focal dblclick', function (event) {
@@ -120,10 +123,10 @@ Template.spottingMap.helpers({
 });
 
 Template.spottingMap.events({
-    'mousemove .image': function () {
+    'mousemove .image, touchmove .image': function () {
         hasPanned = $panZoomElement.panzoom('isPanning');
     },
-    'click .marker': function (event) {
+    'click .marker, touchend .marker': function (event) {
         var $target = $(event.target),
             selectedClass = 'is-selected',
             markerSelector = '.marker';
@@ -134,18 +137,21 @@ Template.spottingMap.events({
             selectedMarker.set(this);
         }
     },
-    'mouseup .image': function (event) {
-        var $target = $(event.target);
-        if (!hasPanned && !$target.hasClass('marker')) {
+    'mouseup .image, touchend .image': function (event) {
+        var $target = $(event.target),
+            pageX = event.type === 'mouseup' ? event.pageX : event.changedTouches[0].pageX,
+            pageY = event.type === 'mouseup' ? event.pageY : event.changedTouches[0].pageY;
+
+        if (!hasPanned && !hasZoomed && !$target.hasClass('marker')) {
             var imagePosition = $(event.currentTarget).offset(),
-                x = event.pageX - imagePosition.left,
-                y = event.pageY - imagePosition.top;
+                x = pageX - imagePosition.left,
+                y = pageY - imagePosition.top;
 
             // prepare a new marker with translated coordinates:
             // setting this var 'opens' the marker types menu
             editMarker.set(getCanvasCoords(x, y));
         }
-        hasPanned = false;
+        hasPanned = hasZoomed = false;
     },
     /**
      * Handles saving the markers to the current image
@@ -208,6 +214,8 @@ Template.spottingMap.events({
         var marker = this;
 
         removeMarkerByCoordinate(marker.x, marker.y);
+        editMarker.set(null);
+        selectedMarker.set(null);
     },
     /**
      * Debugging handler to easily clear all markers on the given image
