@@ -7,12 +7,13 @@
     border-radius: 3px;
     width: 100%;
     background-color: $buttons-background;
-    padding: 12px 15px;
+    padding: 18px 15px;
     line-height: 1;
     text-align: center;
     text-decoration: none;
     font-weight: bold;
     font-size: em(25px);
+    letter-spacing: -1px;
     color: $buttons-color;
     cursor: pointer;
 

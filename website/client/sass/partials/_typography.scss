@@ -29,3 +29,24 @@ h2, .h2, .h2 + .subtitle {
 .centered-text {
     text-align: center;
 }
+
+.introduction {
+    margin-bottom: 1.8em;
+    color: $introduction-color;
+}
+
+.statistic {
+    text-align: center;
+    font-size: em(25px);
+}
+
+.huge-number {
+    display: block;
+    font-size: em(100px);
+    text-align: center;
+    color: $white;
+
+    .statistic & {
+        font-size: em(100px, 25px);
+    }
+}
