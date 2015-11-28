@@ -79,10 +79,12 @@
 
             {{#with image}}
                 {{#if markersEdited}}
-                    <button class="save" data-do="save">save this spot (next)</button>
+                    <div class="action-buttons">
+                        <button  class="button button-save" data-do="save">save this spot!</button>
+                    </div>
                 {{else}}
                     <div class="action-buttons">
-                        <button data-do="next" class="button button-next">nothting to spot, next.. !</button>
+                        <button data-do="next" class="button button-next">nothting to spot, next..!</button>
                         <a class="quit-link" href="/">quit</a>
                     </div>
                 {{/if}}

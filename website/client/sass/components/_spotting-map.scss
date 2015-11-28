@@ -42,8 +42,23 @@
         border-radius: 50%;
         width: $marker-size;
         height: $marker-size;
-        line-height: $marker-size - 8px;
+        padding-top: $marker-size - 8px;
+        // line-height: $marker-size - 8px;
         text-align: center;
+        font-size: em(20px);
+        color: $white;
+
+        &::before {
+            display: block;
+            height: 15px;
+            content: '';
+        }
+
+        &::after {
+            display: block;
+            white-space: nowrap;
+            content: 'over here!';
+        }
 
         &.is-selected {
             &::after {
