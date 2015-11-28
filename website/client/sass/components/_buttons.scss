@@ -49,6 +49,25 @@
     }
 }
 
+.button-close {
+    position: relative;
+    @include appearance(none);
+    overflow: hidden;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    white-space: nowrap;
+
+    &::before {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        font-weight: bold;
+        font-size: 26px;
+        content: "\00D7";
+    }
+}
+
 @include when(tablet-portrait) {
     .button {
         display: inline-block;

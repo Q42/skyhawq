@@ -219,6 +219,11 @@ Template.spottingMap.events({
         markImageAsViewed();
 
         Router.go('next');
+    },
+    'click [data-do=close-panel]': function () {
+
+
+        editMarker.set(null);
     }
 });
 
