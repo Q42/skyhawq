@@ -14,8 +14,8 @@ var port   = process.env.PORT   || 8000;
 
 childProcess.execSync("mkdir -p "+folder);
 
-function json(res, data) {
-	res.writeHead(200, {'Content-Type': 'application/json' });
+function json(res, data, status) {
+	res.writeHead(status || 200, {'Content-Type': 'application/json' });
 	res.end(JSON.stringify(data));
 }
 
@@ -45,8 +45,15 @@ var methods = {
 		if(!/^[a-z]+$/.test(flightId)) {
 			return json(res, {
 				"error": "Invalid flight name"
-			});
+			}, 400);
 		}
+		var stats = fs.lstatSync(path.join(folder, flightId));
+    if (!stats.isDirectory()) {
+			return json(res, {
+				"error": "Invalid flight name"
+			}, 400);
+		}
+		
 		var files = fs.readdirSync(path.join(folder, flightId));
 		var fileStats = files.filter(noDotFiles).map(function(f){
 			var stat = fs.statSync(path.join(folder, flightId, f));
