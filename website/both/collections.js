@@ -1,19 +1,24 @@
 Images = new Mongo.Collection('images');
 
-if (Meteor.isServer && Images.find().count() === 0) {
-    Images.insert({
-        'source': '/data/sumatra.png',
-        'coords': {
-            'lat': 1234,
-            'lng': 1234
-        },
-        'markers': [
-            {
-                'type': 'ape',
-                'description': 'a monkey in a tree',
-                'x': 100,
-                'y': 123
-            }
-        ]
+var basePath = 'http://greenpeace.hermanbanken.nl/flights/',
+    flightId = '1';
+
+if (Meteor.isServer && Images.find({flightId: flightId}).count() === 0) {
+    HTTP.get(basePath + flightId + '/' + 'path', {}, function (error, result) {
+        var data = result.data;
+
+        // import photos
+        data.photos.forEach(function (photo) {
+            Images.insert({
+                'flightId': flightId,
+                'source': basePath + flightId + '/' + photo.photoPath,
+                'date': photo.date,
+                'coords': {
+                    'lat': photo.gps.latitude,
+                    'lng': photo.gps.longitude
+                },
+                'markers': []
+            });
+        });
     });
 }
