@@ -1,12 +1,12 @@
 Images = new Mongo.Collection('images');
 
 var basePath = 'http://greenpeace.hermanbanken.nl/flights/',
-    flightId = '1',
-    skip = 500;
+    flightId = '2',
+    skip = 290;
 
 if (Meteor.isServer && Images.find({flightId: flightId}).count() === 0) {
-    HTTP.get(basePath + flightId + '/' + 'path', {}, function (error, result) {
-        var data = result.data;
+    HTTP.get(basePath + flightId + '/' + 'files.json', {}, function (error, result) {
+        var data = JSON.parse(result.content);
 
         // import photos
         data.photos.forEach(function (photo, index) {
@@ -16,8 +16,8 @@ if (Meteor.isServer && Images.find({flightId: flightId}).count() === 0) {
                     'source': basePath + flightId + '/' + photo.photoPath,
                     'date': photo.date,
                     'coords': {
-                        'lat': photo.gps.latitude,
-                        'lng': photo.gps.longitude
+                        // 'lat': photo.gps.latitude,
+                        // 'lng': photo.gps.longitude
                     },
                     'markers': []
                 });
