@@ -1,7 +1,8 @@
 var http = require('http'),
     path = require('path'),
     os = require('os'),
-    fs = require('fs');
+    fs = require('fs'),
+		url = require('url');
 
 var Busboy = require('busboy');
 var md5File = require('md5-file');
@@ -43,7 +44,7 @@ var methods = {
 	
 	flight: function(req, res, flightId) {
 		var p = path.join(folder, flightId);
-		if(!/^[a-z]+$/.test(flightId) || !fs.existsSync(p) || !fs.statSync(p).isDirectory()) {
+		if(!/^[a-z0-9\-]+$/.test(flightId) || !fs.existsSync(p) || !fs.statSync(p).isDirectory()) {
 			return json(res, {
 				"error": "Invalid flight name"
 			}, 400);
@@ -63,6 +64,25 @@ var methods = {
 		});
 		flightId
 		return;
+	},
+	
+	serveFile: function(req, res, filename) {
+		if(filename.indexOf("..") >= 0) {
+			return res.end();
+		}
+    var file = path.join(folder, filename);
+    path.exists(file, function(exists) {
+        if(!exists) {
+            console.log("not exists: " + file);
+            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.write('404 Not Found\n');
+            res.end();
+        }
+        var mimeType = mimeTypes[path.extname(file).split(".")[1]];
+        res.writeHead(200, mimeType);
+        var fileStream = fs.createReadStream(file);
+        fileStream.pipe(res);
+    });
 	},
 	
 	upload: function(req, res, flightId) {
@@ -100,6 +120,9 @@ http.createServer(function(req, res) {
 			}
 			if(req.url.indexOf("/flights/") == 0 && req.url.length > "/flights/".length) {
 				var id = req.url.substr("/flights/".length);
+				if(id.indexOf("/") > 0) {
+					return methods.serveFile(req, res, req.url.substr("/flights/".length));
+				}
 				return methods.flight(req, res, id);
 			}
 			return methods.index(req, res);
