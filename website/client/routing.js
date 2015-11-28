@@ -1,29 +1,29 @@
-FlowRouter.route('/image/next', {
-    name: 'next',
-    action: function () {
-        var image = Images.findOne({viewed: {$ne: Meteor.connection._lastSessionId}}),
-            path = FlowRouter.path("image", {imageId: image._id}, {});
-        FlowRouter.go(path);
-    }
+Router.route('/image/next', function () {
+  console.log("Redirect!");
+	var image = Images.findOne({viewed: {$ne: Meteor.connection._lastSessionId}});
+	if(image)
+		this.go("image", {imageId: image._id});
+	else
+		this.go("/");
+}, {
+	name: "next"
 });
 
-FlowRouter.route('/image/:imageId', {
-    name: 'image',
-    action: function () {
-        BlazeLayout.render('layout1', {main: "spottingMap"});
-    }
+Router.route('/image/:imageId', function () {
+		console.log(FlowRouter.getParam("imageId"));
+		BlazeLayout.render('layout1', {main: "spottingMap"});
+}, {
+	name: 'image'
 });
 
-FlowRouter.route('/thanks', {
-    name: 'thanks',
-    action: function () {
-        BlazeLayout.render('layout1', {main: "thanks"});
-    }
+Router.route('/thanks', function () {
+		BlazeLayout.render('layout1', {main: "thanks"});
+}, {
+	name: 'thanks'
 });
 
-FlowRouter.route('/', {
-    name: 'home',
-    action: function () {
-        BlazeLayout.render('layout1', {main: "donate"});
-    }
+Router.route('/', function () {
+		BlazeLayout.render('layout1', {main: "donate"});
+}, {
+	name: 'home',
 });
