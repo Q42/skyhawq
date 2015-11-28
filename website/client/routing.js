@@ -1,11 +1,29 @@
+FlowRouter.route('/image/next', {
+    name: 'next',
+    action: function () {
+        var image = Images.findOne({viewed: {$ne: Meteor.connection._lastSessionId}}),
+            path = FlowRouter.path("image", {imageId: image._id}, {});
+        FlowRouter.go(path);
+    }
+});
+
 FlowRouter.route('/image/:imageId', {
-  action: function() {
-    BlazeLayout.render('layout1', {  main: "spottingMap"  });
-  }
+    name: 'image',
+    action: function () {
+        BlazeLayout.render('layout1', {main: "spottingMap"});
+    }
+});
+
+FlowRouter.route('/thanks', {
+    name: 'thanks',
+    action: function () {
+        BlazeLayout.render('layout1', {main: "thanks"});
+    }
 });
 
 FlowRouter.route('/', {
-  action: function() {
-    BlazeLayout.render('layout1', {  main: "donate"  });
-  }
+    name: 'home',
+    action: function () {
+        BlazeLayout.render('layout1', {main: "donate"});
+    }
 });

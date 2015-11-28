@@ -2,6 +2,11 @@
 
     <div class="spotting-map">
         <div class="canvas">
+            {{#with image}}
+                {{#if markersNotEdited}}
+                    <h2 class="title">spot something? tap it!</h2>
+                {{/if}}
+            {{/with}}
             <div class="image">
                 {{#with image}}
                     <img src="{{ source }}" width="600" height="600">
@@ -71,15 +76,29 @@
                     </ul>
                 </div>
             {{/if}}
+
+            {{#with image}}
+                {{#if markersEdited}}
+                    <button class="save" data-do="save">save this spot (next)</button>
+                {{else}}
+                    <button data-do="next" class="button button-next">nothting to spot, next.. !</button>
+                    <a href="/">quit</a>
+                {{/if}}
+            {{/with}}
+
+            <!--
             <button class="zoom-in" data-do="zoom-in">Zoom in</button>
             <button class="zoom-out" data-do="zoom-out">Zoom out</button>
             <input type="range" name="zoom" class="zoom-range" data-do="zoom-range">
             <button class="reset" data-do="reset">Reset</button>
+            -->
+
             {{#with image}}
-                <button class="save" data-do="save">Save</button>
+                <!--
                 {{#if markers}}
                     <button data-do="clear-markers">Remove all markers (debugging)</button>
                 {{/if}}
+                -->
             {{/with}}
         </div>
     </div>

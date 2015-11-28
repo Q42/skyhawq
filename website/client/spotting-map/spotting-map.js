@@ -84,6 +84,20 @@ function removeMarkerByCoordinate(x, y) {
     markers.set(_markers);
 }
 
+function markersEdited(newMarkers) {
+    return JSON.stringify(markers.get()) !== JSON.stringify(newMarkers);
+}
+
+function markImageAsViewed() {
+    var image = currentImage();
+
+    Images.update(image._id, {
+        '$addToSet': {
+            'viewed': Meteor.connection._lastSessionId
+        }
+    });
+}
+
 Template.spottingMap.helpers({
     'image': function () {
         return currentImage();
@@ -96,6 +110,12 @@ Template.spottingMap.helpers({
     },
     'selectedMarker': function () {
         return selectedMarker.get();
+    },
+    'markersEdited': function () {
+        return markersEdited(this.markers);
+    },
+    'markersNotEdited': function () {
+        return !markersEdited(this.markers);
     }
 });
 
@@ -132,11 +152,24 @@ Template.spottingMap.events({
      * @this {{}} The current image
      */
     'click [data-do=save]': function () {
+        var newMarkers = markers.get(),
+            oldMarkers = Images.findOne(this._id).markers,
+            differentMarkers;
+
+        differentMarkers = newMarkers.filter(function (newMarker) {
+            return oldMarkers.every(function (oldMarker) {
+                return oldMarker.x !== newMarker.x && oldMarker.y !== newMarker.y;
+            });
+        });
+
         Images.update(this._id, {
             '$set': {
                 'markers': markers.get()
             }
         });
+        Session.set('addedMarkers', differentMarkers);
+        markImageAsViewed();
+        FlowRouter.go(FlowRouter.path('thanks'));
     },
     /**
      * Handles editing of a marker
@@ -181,6 +214,11 @@ Template.spottingMap.events({
      */
     'click [data-do=clear-markers]': function () {
         markers.set([]);
+    },
+    'click [data-do=next]': function () {
+        markImageAsViewed();
+
+        FlowRouter.go('next');
     }
 });
 
@@ -207,5 +245,11 @@ Template.spottingMap.onRendered(function () {
  * reactive
  */
 function currentImage() {
-    return Images.findOne(FlowRouter.getParam('imageId'));
+    var imageId = FlowRouter.getParam('imageId');
+    if (!imageId) {
+        imageId = window.location.href.split('/').pop();
+    }
+    console.info(imageId);
+
+    return Images.findOne(imageId);
 }
