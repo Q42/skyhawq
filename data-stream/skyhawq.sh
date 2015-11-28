@@ -1,6 +1,7 @@
 #!/bin/sh
 
-set -e # stop on error
+## stop on error
+# set -e 
 
 # GPS
 mkdir -p /var/skyhawq

@@ -25,8 +25,7 @@ make
 
 using namespace std;
 
-int main(int argc, char *argv[]){
-
+int run() {
     // This vector is used to store location data, decoded from ubx messages.
     // After you decode at least one message successfully, the information is stored in vector
     // in a way described in function decodeMessage(vector<double>& data) of class UBXParser(see ublox.h)
@@ -67,6 +66,10 @@ int main(int argc, char *argv[]){
 
     while (true)
     {
+  			if(true || !ofs.good()) {
+	   	  		ofstream ofs(buf, ios::app);
+		  	}
+			
         pos_result = gps.decodeSingleMessage(Ublox::NAV_POSLLH, pos_data);
         if(pos_result) {
             ofs << "gps=";
@@ -102,4 +105,11 @@ int main(int argc, char *argv[]){
     ofs.close();
 
     return 0;
+}
+
+int main(int argc, char *argv[]){
+	while(true){
+		run();
+		sleep 5;
+	}
 }

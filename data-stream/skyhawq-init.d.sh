@@ -23,27 +23,27 @@ PID=/var/run/skyhawq.pid;
 
 case "$1" in
   start)
-	mkdir -p /var/run/skyhawq/photos;
+    mkdir -p /var/run/skyhawq/photos;
     echo -e "Starting $NAME";
-	cd $BASE;
-	$START > $LOG 2>&1 &
-	echo $! > $PID;
-	echo "Done!"
-	;;
+        cd $BASE;
+        $START > $LOG 2>&1 &
+        GROUP=`ps --pid=$! -o pgid=`
+        echo $GROUP > $PID;
+        echo "Done!"
+        ;;
   stop)
     if [ -f "$PID" ]
-	then
-	echo -e "Stopping daemon: $NAME";
-	PIDNR=`cat $PID`
-	GROUP=`ps --pid=$PIDNR -o pgid=`
-	kill -9 $GROUP
-	rm $PID
+        then
+        echo -e "Stopping daemon: $NAME";
+        GROUP=`cat $PID`
+        kill -9 -$GROUP
+        rm $PID
 
     echo "Stopping done!"
-	else
-	echo -e "$NAME is not started (PID not found)"
-	fi
-	;;
+        else
+        echo -e "$NAME is not started (PID not found)"
+        fi
+        ;;
   restart)
     echo -e "Restarting daemon: $NAME";
     $0 stop
