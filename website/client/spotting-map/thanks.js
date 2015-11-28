@@ -11,6 +11,6 @@ Template.thanks.helpers({
     });
     var last = lines.pop();
     var line = lines.length > 0 ? lines.join(", ") + " and " + last : last;
-    return line;
+    return line.toLowerCase();
   }
 });
