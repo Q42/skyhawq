@@ -4,7 +4,7 @@
         <div class="canvas">
             {{#with image}}
                 {{#if markersNotEdited}}
-                    <h2 class="title">spot something? tap it!</h2>
+                    <h2 class="spotting-map-title">spot something? tap it!</h2>
                 {{/if}}
             {{/with}}
             <div class="image">
@@ -81,8 +81,10 @@
                 {{#if markersEdited}}
                     <button class="save" data-do="save">save this spot (next)</button>
                 {{else}}
-                    <button data-do="next" class="button button-next">nothting to spot, next.. !</button>
-                    <a href="/">quit</a>
+                    <div class="action-buttons">
+                        <button data-do="next" class="button button-next">nothting to spot, next.. !</button>
+                        <a class="quit-link" href="/">quit</a>
+                    </div>
                 {{/if}}
             {{/with}}
 
