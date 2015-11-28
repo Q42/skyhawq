@@ -88,13 +88,10 @@
         bottom: 20px;
         text-align: center;
 
-        a {
+        .quit-link {
+            font-size: em(25px);
             line-height: 30px;
         }
     }
-
-}
-
-@include when(tablet) {
 
 }
