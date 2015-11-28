@@ -9,6 +9,7 @@ html {
 
     font: #{$default-font-size}/#{$default-line-height} $default-font-family;
     letter-spacing: -0.5px;
+    color: $body-color;
 }
 
 body {

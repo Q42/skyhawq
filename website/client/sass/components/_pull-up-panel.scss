@@ -1,0 +1,28 @@
+/// Pull up panel
+
+.pull-up-panel {
+    position: fixed;
+    top: 25%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    background-color: $body-background;
+    padding: 0 20px;
+
+    .title {
+        margin-top: 0;
+        padding-top: 2em;
+        text-align: center;
+    }
+
+    .button-close {
+        float: right;
+    }
+
+    .buttons-list {
+        .item {
+            margin-bottom: 1em;
+        }
+    }
+}

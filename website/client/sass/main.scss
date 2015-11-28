@@ -4,8 +4,10 @@
 @import 'mixins/when';
 
 @import 'partials/base',
+        'partials/generic',
         'partials/typography',
         'partials/page-footer';
 
 @import 'components/buttons',
-        'components/spotting-map';
+        'components/spotting-map',
+        'components/pull-up-panel';

@@ -14,6 +14,7 @@
     font-weight: bold;
     font-size: em(25px);
     color: $buttons-color;
+    cursor: pointer;
 
     &::after {
         position: absolute;
@@ -26,6 +27,10 @@
         content: '';
     }
 
+    &:hover {
+        background-color: $buttons-shadow;
+    }
+
     &:only-child {
         margin: 0;
     }
@@ -36,6 +41,10 @@
 
     &::after {
         box-shadow: 0 2px 0 $action-buttons-shadow;
+    }
+
+    &:hover {
+        background-color: $action-buttons-shadow;
     }
 }
 

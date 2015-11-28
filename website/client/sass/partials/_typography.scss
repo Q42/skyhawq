@@ -4,11 +4,14 @@ h1, .h1, .h1 + .subtitle {
     letter-spacing: em(-3px, 52px);
     font-weight: bold;
     font-size: em(52px);
+    color: $title-color;
 }
 
 h2, .h2, .h2 + .subtitle {
+    margin: 0.6em 0;
     font-weight: bold;
-    font-size: em(25px);
+    font-size: em(35px);
+    color: $title-color;
 }
 
 .subtitle[class] {

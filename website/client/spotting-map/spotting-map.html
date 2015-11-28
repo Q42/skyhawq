@@ -21,29 +21,55 @@
         </div>
         <div class="controls">
             {{#if editMarker}}
-            <ul class="marker-menu">
-                <li class="item">
-                    Animals
-                    <ul>
-                        <li><button data-do="save-marker" data-marker-type="orangutan" class="option">Orangutan</button></li>
-                        <li><button data-do="save-marker" data-marker-type="leopard" class="option">Leopard</button></li>
-                        <li><button data-do="save-marker" data-marker-type="rhinoceros" class="option">Rhinoceros</button></li>
-                        <li><button data-do="save-marker" data-marker-type="tiger" class="option">Tiger</button></li>
-                        <li><button data-do="save-marker" data-marker-type="bear" class="option">Bear</button></li>
-                        <li><button data-do="save-marker" data-marker-type="gibbon" class="option">Gibbon</button></li>
+                <div class="pull-up-panel">
+                    <header class="panel-header">
+                        <button class="button-close" data-do="close-panel">cancel</button>
+                        <h3 class="h2 title">what did you spot?</h3>
+                    </header>
+                    <ul class="marker-menu buttons-list no-list">
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="orangutan" class="button"> Orangutan
+                            </button>
+                        </li>
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="leopard" class="button">Leopard</button>
+                        </li>
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="rhinoceros" class="button"> Rhinoceros
+                            </button>
+                        </li>
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="tiger" class="button">Tiger</button>
+                        </li>
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="bear" class="button">Bear</button>
+                        </li>
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="gibbon" class="button">Gibbon</button>
+                        </li>
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="palm-oil-factory" class="button"> Palm oil
+                                factory
+                            </button>
+                        </li>
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="worker" class="button">Workers on the ground
+                            </button>
+                        </li>
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="vehicle" class="button">Car or
+                                truck
+                            </button>
+                        </li>
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="village" class="button">Village
+                            </button>
+                        </li>
+                        <li class="item">
+                            <button data-do="save-marker" data-marker-type="dunno" class="button">?</button>
+                        </li>
                     </ul>
-                </li>
-                <li class="item">
-                    Human activity
-                    <ul>
-                        <li><button data-do="save-marker" data-marker-type="palm-oil-factory" class="option">Palm oil factory</button></li>
-                        <li><button data-do="save-marker" data-marker-type="worker" class="option">Workers on the ground</button></li>
-                        <li><button data-do="save-marker" data-marker-type="vehicle" class="option">Car or truck</button></li>
-                        <li><button data-do="save-marker" data-marker-type="village" class="option">Village</button></li>
-                    </ul>
-                </li>
-                <li class="item"><button data-marker-type="dunno" class="option">?</button></li>
-            </ul>
+                </div>
             {{/if}}
             <button class="zoom-in" data-do="zoom-in">Zoom in</button>
             <button class="zoom-out" data-do="zoom-out">Zoom out</button>
