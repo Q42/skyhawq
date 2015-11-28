@@ -42,18 +42,14 @@ var methods = {
 	},
 	
 	flight: function(req, res, flightId) {
-		if(!/^[a-z]+$/.test(flightId)) {
-			return json(res, {
-				"error": "Invalid flight name"
-			}, 400);
-		}
-    if (!fs.existsSync(path.join(folder, flightId))) {
+		var p = path.join(folder, flightId);
+		if(!/^[a-z]+$/.test(flightId) || !fs.existsSync(p) || !fs.stat(p).isDirectory()) {
 			return json(res, {
 				"error": "Invalid flight name"
 			}, 400);
 		}
 		
-		var files = fs.readdirSync(path.join(folder, flightId));
+		var files = fs.readdirSync(p);
 		var fileStats = files.filter(noDotFiles).map(function(f){
 			var stat = fs.statSync(path.join(folder, flightId, f));
 			return {
