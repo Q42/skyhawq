@@ -17,3 +17,12 @@ do
 	# sleep
 	sleep 1
 done
+
+exit 0
+
+# Upload files this way:
+flightId=`date +"%y%m%d-%H%M%S"`
+curl \
+	-H "Secret: $SECRET" \
+  -F "$filename=@$filename" \
+ "http://greenpeace.hermanbanken.nl/upload/$flightId"

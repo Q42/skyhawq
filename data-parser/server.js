@@ -7,6 +7,7 @@ var http = require('http'),
 var Busboy = require('busboy');
 var md5File = require('md5-file');
 var childProcess = require("child_process");
+var io = null; // Socket.io will be put here
 
 // Configuration: start like this `SECRET=random DATA=/folder node server.js`
 var secret = process.env.SECRET || "secret";
@@ -95,25 +96,37 @@ var methods = {
 		}
 		
 		var busboy = new Busboy({ headers: req.headers });
-		var files = [];
+		var hashes = [], files = [];
 		busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
 			childProcess.execSync("mkdir -p "+path.join(folder, flightId));
       var saveTo = path.join(folder, flightId, path.basename(fieldname));
+			var mimeType = mimeTypes[path.extname(fieldname).split(".")[1]];
       file.pipe(fs.createWriteStream(saveTo));
 			file.on('end',function(){
-				files.push(md5File(saveTo));
+				files.push("/flights/" + flightId + "/" + path.basename(fieldname));
+				hashes.push(md5File(saveTo));
 			});
     });
     busboy.on('finish', function() {
       res.writeHead(200, { 'Connection': 'close' });
-      res.end(files.join(","));
+      res.end(hashes.join(","));
+			notifyChanged(flightId, files);
     });
     return req.pipe(busboy);
 	}
 	
 }
 
-http.createServer(function(req, res) {
+function notifyChanged(flightId, files) {
+	// Notify Mongo here
+	console.log("Good time to notify mongo db");
+	io.emit({
+		flight: flightId,
+		files: files
+	}, { for: 'everyone' });
+}
+
+var server = http.createServer(function(req, res) {
 	try {
 		// View
 		if (req.method === 'GET') {
@@ -144,7 +157,14 @@ http.createServer(function(req, res) {
 	  res.writeHead(500);
   	res.end("Internal Server Error");
 	}
-}).listen(port, function() {
+});
+
+io = require('socket.io')(server);
+io.on('connection', function(socket){
+	console.log("User connected");
+})
+
+server.listen(port, function() {
   console.log('Listening for requests');
 });
 
