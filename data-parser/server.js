@@ -10,6 +10,7 @@ var childProcess = require("child_process");
 // Configuration: start like this `SECRET=random DATA=/folder node server.js`
 var secret = process.env.SECRET || "secret";
 var folder = process.env.DATA   || "/Volumes/Crucial/upload";
+var port   = process.env.PORT   || 8000;
 
 childProcess.execSync("mkdir -p "+folder);
 
@@ -111,7 +112,7 @@ http.createServer(function(req, res) {
 	// 404
   res.writeHead(404);
   res.end();
-}).listen(8000, function() {
+}).listen(port, function() {
   console.log('Listening for requests');
 });
 
