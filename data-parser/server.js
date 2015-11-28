@@ -47,8 +47,7 @@ var methods = {
 				"error": "Invalid flight name"
 			}, 400);
 		}
-		var stats = fs.lstatSync(path.join(folder, flightId));
-    if (!stats.isDirectory()) {
+    if (!fs.existsSync(path.join(folder, flightId))) {
 			return json(res, {
 				"error": "Invalid flight name"
 			}, 400);
