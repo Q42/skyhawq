@@ -9,7 +9,7 @@
             {{/with}}
             <div class="image">
                 {{#with image}}
-                    <img src="{{ source }}" width="600" height="600">
+                    <img src="{{ source }}">
                     {{#each markers}}
                         <span class="marker marker-{{type}}" style="top: {{y}}px; left: {{x}}px;" title="{{description}}">
                             {{description}}
@@ -80,7 +80,11 @@
             {{#with image}}
                 {{#if markersEdited}}
                     <div class="action-buttons">
-                        <button  class="button button-save" data-do="save">save this spot!</button>
+                        {{#if selectedMarker}}
+                            <!-- nothing -->
+                        {{else}}
+                            <button  class="button button-save" data-do="save">save this spot!</button>
+                        {{/if}}
                     </div>
                 {{else}}
                     <div class="action-buttons">
